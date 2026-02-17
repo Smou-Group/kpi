@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KPI - SMOU Group</title>
+  <title>KPI - SMOU GROUP</title>
 
   <style>
     :root{
-      --bg:#ffffff;
-      --btn:#0b0b0b;
-      --btn2:#1a1a1a;
+      --bg:#f4f6f9;
+      --blue:#0d47a1;
+      --blue2:#1565c0;
       --txt:#ffffff;
     }
+
     body{
       margin:0;
       font-family: Arial, Tahoma, sans-serif;
@@ -21,53 +22,92 @@
       align-items:center;
       justify-content:center;
     }
-    .wrap{
-      width:min(900px, 92vw);
+
+    .container{
       text-align:center;
+      width:min(1000px, 95vw);
     }
+
+    .logo{
+      width:180px;
+      margin-bottom:15px;
+    }
+
+    h1{
+      margin:10px 0 40px;
+      font-size:28px;
+      color:#111;
+      letter-spacing:1px;
+    }
+
     .row{
       display:flex;
-      gap:28px;
+      gap:30px;
       justify-content:center;
       flex-wrap:wrap;
-      margin-bottom:28px;
+      margin-bottom:30px;
     }
+
     .btn{
-      width:320px;
-      max-width:92vw;
-      height:76px;
+      width:340px;
+      max-width:95%;
+      height:80px;
       border:none;
-      border-radius:0;
       cursor:pointer;
-      background:linear-gradient(180deg,var(--btn2),var(--btn));
+      background:linear-gradient(180deg,var(--blue2),var(--blue));
       color:var(--txt);
       font-size:20px;
+      font-weight:bold;
       letter-spacing:1px;
-      transition:transform .08s ease, opacity .2s ease;
+      border-radius:8px;
+      transition:all .2s ease;
+      box-shadow:0 8px 18px rgba(0,0,0,.15);
     }
-    .btn:hover{ opacity:.92; }
-    .btn:active{ transform:scale(.99); }
+
+    .btn:hover{
+      transform:translateY(-3px);
+      box-shadow:0 12px 25px rgba(0,0,0,.2);
+    }
+
+    .btn:active{
+      transform:scale(.98);
+    }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="row">
-      <button class="btn" onclick="go('https://kpi-abudhabi.smougroup.com/')">KPI - ABUDHABI</button>
-      <button class="btn" onclick="go('https://kpi-dubai.smougroup.com/')">KPI - DUBAI</button>
-    </div>
 
-    <div>
-      <button class="btn" style="width:420px" onclick="go('https://kpi-leader.smougroup.com/')">
-        KPI - TEAM LEADER
-      </button>
-    </div>
+<div class="container">
+
+  <!-- LOGO -->
+  <img src="logo.png" alt="SMOU GROUP Logo" class="logo">
+
+  <!-- TITLE -->
+  <h1>KPI - SMOU GROUP</h1>
+
+  <div class="row">
+    <button class="btn" onclick="go('https://kpi-abudhabi.smougroup.com/')">
+      KPI - ABUDHABI
+    </button>
+
+    <button class="btn" onclick="go('https://kpi-dubai.smougroup.com/')">
+      KPI - DUBAI
+    </button>
   </div>
 
-  <script>
-    function go(url){
-      window.location.href = url;
-    }
-  </script>
+  <div>
+    <button class="btn" style="width:450px" onclick="go('https://kpi-leader.smougroup.com/')">
+      KPI - TEAM LEADER
+    </button>
+  </div>
+
+</div>
+
+<script>
+  function go(url){
+    window.location.href = url;
+  }
+</script>
+
 </body>
 </html>

@@ -1,94 +1,73 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>كشف العائلة</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KPI - SMOU Group</title>
 
-<style>
-body{
-  font-family: Tahoma, Arial;
-  background:#f7f7f7;
-  padding:20px;
-}
-h2{margin-bottom:10px}
-input{
-  padding:10px;
-  width:300px;
-  font-size:16px;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:15px;
-  background:#fff;
-}
-th,td{
-  border:1px solid #ccc;
-  padding:10px;
-  text-align:right;
-}
-th{
-  background:#0f5c6e;
-  color:#fff;
-}
-tr:nth-child(even){background:#f2f2f2}
-.note{color:#666;margin-top:8px}
-</style>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --btn:#0b0b0b;
+      --btn2:#1a1a1a;
+      --txt:#ffffff;
+    }
+    body{
+      margin:0;
+      font-family: Arial, Tahoma, sans-serif;
+      background:var(--bg);
+      display:flex;
+      min-height:100vh;
+      align-items:center;
+      justify-content:center;
+    }
+    .wrap{
+      width:min(900px, 92vw);
+      text-align:center;
+    }
+    .row{
+      display:flex;
+      gap:28px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-bottom:28px;
+    }
+    .btn{
+      width:320px;
+      max-width:92vw;
+      height:76px;
+      border:none;
+      border-radius:0;
+      cursor:pointer;
+      background:linear-gradient(180deg,var(--btn2),var(--btn));
+      color:var(--txt);
+      font-size:20px;
+      letter-spacing:1px;
+      transition:transform .08s ease, opacity .2s ease;
+    }
+    .btn:hover{ opacity:.92; }
+    .btn:active{ transform:scale(.99); }
+  </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <div class="row">
+      <button class="btn" onclick="go('https://kpi-abudhabi.smougroup.com/')">KPI - ABUDHABI</button>
+      <button class="btn" onclick="go('https://kpi-dubai.smougroup.com/')">KPI - DUBAI</button>
+    </div>
 
-<h2>🔎 البحث باسم العائلة</h2>
+    <div>
+      <button class="btn" style="width:420px" onclick="go('https://kpi-leader.smougroup.com/')">
+        KPI - TEAM LEADER
+      </button>
+    </div>
+  </div>
 
-<input id="search" placeholder="اكتب اسم العائلة" />
-<div class="note" id="info">يرجى رفع ملف البيانات</div>
-<br><br>
-<input type="file" id="file" accept=".csv">
-
-<table id="table" style="display:none">
-  <thead></thead>
-  <tbody></tbody>
-</table>
-
-<script>
-let data=[], headers=[];
-const FAMILY_COL = "العائلة";
-
-document.getElementById("file").addEventListener("change", async e=>{
-  const text = await e.target.files[0].text();
-  const lines = text.trim().split("\n");
-  headers = lines[0].split(",");
-  data = lines.slice(1).map(l=>{
-    let obj={};
-    l.split(",").forEach((v,i)=>obj[headers[i]]=v);
-    return obj;
-  });
-  document.getElementById("info").innerText="تم تحميل البيانات";
-});
-
-document.getElementById("search").addEventListener("input",()=>{
-  const q = document.getElementById("search").value.trim();
-  const table = document.getElementById("table");
-  const thead = table.querySelector("thead");
-  const tbody = table.querySelector("tbody");
-
-  if(!q){ table.style.display="none"; return; }
-
-  const norm = s => (s||"").toString().trim().replace(/\s+/g," ");
-const res = data.filter(r => norm(r[FAMILY_COL]).includes(norm(q)));
-
-  if(!res.length){
-    document.getElementById("info").innerText="لا توجد نتائج";
-    table.style.display="none";
-    return;
-  }
-
-  thead.innerHTML="<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr>";
-  tbody.innerHTML=res.map(r=>"<tr>"+headers.map(h=>`<td>${r[h]||""}</td>`).join("")+"</tr>").join("");
-  table.style.display="table";
-  document.getElementById("info").innerText=`عدد النتائج: ${res.length}`;
-});
-</script>
-
+  <script>
+    function go(url){
+      window.location.href = url;
+    }
+  </script>
 </body>
 </html>

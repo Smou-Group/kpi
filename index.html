@@ -1,751 +1,640 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>KPI — SMOU GROUP</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>kpi.smougroup — إدخال بيانات العملاء</title>
 
   <style>
     :root{
-      --navy:#071c33;
-      --blue:#0b5fa8;
-      --bg:#f3f7ff;
-      --card:#ffffff;
-      --text:#0b1b2b;
-      --muted:#6b7a93;
-      --line:#e4ecff;
-      --shadow: 0 14px 35px rgba(7,28,51,.12);
+      --glass: rgba(255,255,255,.12);
+      --glass2: rgba(255,255,255,.18);
+      --border: rgba(255,255,255,.25);
+      --text:#ffffff;
+      --muted: rgba(255,255,255,.82);
+      --shadow: 0 18px 55px rgba(0,0,0,.40);
+      --accent: rgba(40,150,255,.65);
+      --accent2: rgba(17,120,214,.40);
       --radius: 18px;
-      --fixed:#a8c8ef;    /* الأزرق */
-      --fixed2:#cfe3ff;
-      --danger:#b00020;
-      --ok:#0b7a2a;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: "Tajawal","Cairo",system-ui,-apple-system,Segoe UI,Arial;
-      background:var(--bg);
-      color:var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
+      color: var(--text);
+      min-height:100vh;
+      background:
+        url("back.png") center/cover no-repeat fixed,
+        url("back.jpg") center/cover no-repeat fixed,
+        radial-gradient(1200px 800px at 30% 10%, rgba(40,150,255,.28), transparent 60%),
+        linear-gradient(180deg, #071c33, #0b1b2b);
     }
 
-    .wrap{max-width:1150px;margin:28px auto;padding:0 16px}
-    .header{
-      display:flex;gap:14px;align-items:center;justify-content:space-between;
-      margin-bottom:16px;
+    .overlay{
+      min-height:100vh;
+      padding:26px 14px 40px;
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.45));
+    }
+
+    .wrap{max-width:1150px;margin:0 auto}
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap;
+      margin-bottom:14px;
     }
     .brand{
-      display:flex;align-items:center;gap:12px;
+      display:flex; align-items:center; gap:12px;
+      padding:12px 14px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
     }
-    .logo{
-      width:44px;height:44px;border-radius:14px;
-      background:linear-gradient(135deg,var(--blue),#2aa7ff);
-      box-shadow:0 12px 26px rgba(11,95,168,.22);
+    .brand img{
+      width:44px; height:44px; object-fit:contain;
+      background: rgba(255,255,255,.85);
+      border-radius: 12px;
+      padding:6px;
     }
-    .title h1{margin:0;font-size:18px}
-    .title p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .brand .txt{line-height:1.15}
+    .brand .txt b{display:block;font-size:14px}
+    .brand .txt span{font-size:12px;color:var(--muted)}
+
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .btn{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, var(--glass2), rgba(255,255,255,.08));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+      display:inline-flex; align-items:center; gap:8px;
+      font-weight:700;
+    }
+    .btn:hover{transform: translateY(-1px)}
+    .btn.primary{
+      border-color: rgba(40,150,255,.75);
+      background: linear-gradient(180deg, rgba(40,150,255,.40), rgba(255,255,255,.10));
+    }
+    .btn.danger{
+      border-color: rgba(255,90,90,.55);
+      background: linear-gradient(180deg, rgba(255,90,90,.28), rgba(255,255,255,.08));
+    }
 
     .card{
-      background:var(--card);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      border:1px solid rgba(255,255,255,.9);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
       overflow:hidden;
     }
 
-    .topbar{
-      padding:14px 14px;
-      border-bottom:1px solid var(--line);
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
+    .card-h{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap;
+      border-bottom: 1px solid rgba(255,255,255,.18);
+    }
+    .card-h h1{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .card-h .meta{
+      display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px;
       align-items:center;
-      justify-content:space-between;
     }
-
-    .controls{
-      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-    }
-
-    .field{
-      display:flex;gap:8px;align-items:center;
-      background:#f8fbff;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:8px 10px;
-    }
-    label{font-size:12px;color:var(--muted)}
-    select, input[type="number"], input[type="text"]{
-      border:0;
-      outline:0;
-      background:transparent;
-      font:inherit;
-      width:auto;
-      min-width:170px;
-      color:var(--text);
-    }
-    input[type="number"]{min-width:120px}
-    .btns{display:flex;gap:8px;flex-wrap:wrap}
-
-    .btn{
-      border:0;
-      border-radius:14px;
-      padding:10px 12px;
-      font-weight:700;
-      cursor:pointer;
-      background:rgba(11,95,168,.10);
-      color:var(--blue);
-      transition:.2s;
-    }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.primary{
-      background:linear-gradient(135deg,var(--blue),#2aa7ff);
-      color:#fff;
-      box-shadow:0 12px 26px rgba(11,95,168,.22);
-    }
-    .btn.danger{
-      background:rgba(176,0,32,.10);
-      color:var(--danger);
-    }
-    .btn.ghost{
-      background:#f8fbff;
-      color:var(--text);
-      border:1px solid var(--line);
+    .pill{
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.12);
+      padding:6px 10px;
+      border-radius:999px;
     }
 
     .grid{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-    }
-    .grid thead th{
-      background:linear-gradient(180deg,var(--navy),#0a2a4b);
-      color:#fff;
-      padding:12px 10px;
-      font-size:13px;
-      text-align:center;
-      position:sticky;
-      top:0;
-      z-index:2;
-    }
-    .grid tbody td{
-      border-bottom:1px solid var(--line);
-      padding:10px;
-      vertical-align:middle;
-      font-size:13px;
-    }
-    .grid tbody tr:hover td{background:#fbfdff}
-    .center{text-align:center}
-    .right{text-align:right}
-
-    .fixed{
-      background:var(--fixed);
-      font-weight:800;
-    }
-    .fixed.light{background:var(--fixed2);font-weight:800}
-    .var{
-      background:#fff;
-    }
-    .kpiInput{
-      width:110px;
-      padding:8px 10px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:#fff;
-    }
-    .score{
-      font-weight:900;
-      color:#0a2a4b;
-    }
-    .muted{color:var(--muted)}
-    .footerbar{
-      padding:14px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      border-top:1px solid var(--line);
-      background:#fbfdff;
-    }
-    .totalBox{
-      display:flex;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
       gap:12px;
-      align-items:center;
-      padding:10px 12px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      background:#fff;
-      min-width:280px;
-      justify-content:space-between;
+      padding:16px;
     }
-    .pill{
-      padding:6px 10px;
-      border-radius:999px;
-      font-weight:800;
-      font-size:12px;
-      border:1px solid var(--line);
-      background:#f6fbff;
-      color:var(--text);
+    .field{
+      grid-column: span 6;
+      display:flex; flex-direction:column; gap:7px;
     }
-    .pill.ok{background:rgba(11,122,42,.10);color:var(--ok);border-color:rgba(11,122,42,.20)}
-    .pill.bad{background:rgba(176,0,32,.10);color:var(--danger);border-color:rgba(176,0,32,.20)}
-    .small{font-size:12px}
-
-    .records{
-      margin-top:14px;
-      padding:14px;
-      border-top:1px solid var(--line);
-      background:#ffffff;
-    }
-    .records h3{margin:0 0 10px;font-size:14px}
-    .recTable{
+    .field.small{grid-column: span 4;}
+    .field.full{grid-column: span 12;}
+    label{font-size:12px;color:var(--muted)}
+    input, select, textarea{
       width:100%;
-      border-collapse:separate;border-spacing:0;
+      padding:12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+      outline: none;
+      backdrop-filter: blur(10px);
+    }
+    input::placeholder, textarea::placeholder{color: rgba(255,255,255,.65)}
+    textarea{min-height:90px; resize: vertical}
+
+    .form-actions{
+      padding:0 16px 16px;
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-start;
+    }
+
+    .table-wrap{padding:0 16px 16px; overflow:auto}
+    table{
+      width:100%;
+      border-collapse: collapse;
+      min-width: 980px;
+      background: rgba(0,0,0,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 16px;
       overflow:hidden;
-      border:1px solid var(--line);
-      border-radius:14px;
     }
-    .recTable th, .recTable td{
-      padding:10px;
-      border-bottom:1px solid var(--line);
-      font-size:12px;
-      text-align:center;
+    th, td{
+      padding:10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      vertical-align: top;
+      font-size: 12.5px;
     }
-    .recTable th{background:#f2f7ff;color:#0a2a4b}
-    .recActions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-    .hint{padding:10px 14px;border-top:1px solid var(--line);background:#f8fbff;color:var(--muted);font-size:12px}
-    @media (max-width:700px){
-      select, input[type="number"], input[type="text"]{min-width:140px}
-      .totalBox{min-width:100%}
-      .grid thead th{font-size:12px}
+    th{
+      text-align:right;
+      background: rgba(255,255,255,.10);
+      color: var(--muted);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      backdrop-filter: blur(10px);
+    }
+    tr:hover td{background: rgba(255,255,255,.06)}
+    td .rowbtn{
+      padding:8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      cursor:pointer;
+      font-weight:700;
+    }
+    td .rowbtn.del{
+      border-color: rgba(255,90,90,.55);
+      background: rgba(255,90,90,.18);
+    }
+
+    .bottom{
+      margin-top:14px;
+      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      color: rgba(255,255,255,.7);
+      font-size: 12px;
+      padding: 0 4px;
+    }
+
+    .search{
+      width:min(420px, 100%);
+    }
+
+    @media (max-width: 820px){
+      .field{grid-column: span 12;}
+      table{min-width: 980px;}
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div class="title">
-          <h1>نظام KPI — SMOU GROUP</h1>
-          <p>اختار المندوب والشهر، ادخل الفعلي، الدرجة تُحسب تلقائيًا ثم احفظ.</p>
-        </div>
-      </div>
+  <div class="overlay">
+    <div class="wrap">
 
-      <div class="btns">
-        <button class="btn ghost" id="btnExport">تصدير JSON</button>
-        <label class="btn ghost" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
-          استيراد JSON
-          <input id="fileImport" type="file" accept="application/json" style="display:none">
-        </label>
-      </div>
-    </div>
-
-    <div class="card">
       <div class="topbar">
-        <div class="controls">
-          <div class="field">
-            <label>المندوب</label>
-            <select id="repSelect"></select>
-          </div>
-
-          <div class="field">
-            <label>الشهر</label>
-            <select id="monthSelect"></select>
-          </div>
-
-          <div class="field" style="min-width:260px">
-            <label>ملاحظة</label>
-            <input id="note" type="text" placeholder="اختياري (مثال: إجازة/ظروف/مشروع كبير)"/>
+        <div class="brand">
+          <img src="logo.png" alt="SMOU GROUP Logo" onerror="this.style.display='none'">
+          <div class="txt">
+            <b>kpi.smougroup</b>
+            <span>نموذج إدخال بيانات العملاء (CRM Action)</span>
           </div>
         </div>
 
-        <div class="btns">
-          <button class="btn" id="btnLoad">تحميل</button>
-          <button class="btn primary" id="btnSave">حفظ</button>
-          <button class="btn danger" id="btnDelete">حذف هذا الشهر</button>
-          <button class="btn" id="btnReset">تفريغ الإدخال</button>
+        <div class="actions">
+          <button class="btn primary" id="btnExport">تصدير CSV</button>
+          <label class="btn" for="fileImport" style="cursor:pointer">استيراد CSV</label>
+          <input id="fileImport" type="file" accept=".csv" style="display:none">
+          <button class="btn danger" id="btnClearAll">مسح الكل</button>
         </div>
       </div>
 
-      <div style="overflow:auto">
-        <table class="grid" id="kpiTable">
-          <thead>
-            <tr>
-              <th style="min-width:50px">#</th>
-              <th style="min-width:360px">بنود التقييم</th>
-              <th style="min-width:120px">التارجت (المطلوب)</th>
-              <th style="min-width:120px">الدرجة (الوزن)</th>
-              <th style="min-width:140px">الفعلي (متغير)</th>
-              <th style="min-width:120px">الدرجة المحسوبة</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-
-      <div class="footerbar">
-        <div class="totalBox">
-          <div>
-            <div class="small muted">الإجمالي</div>
-            <div style="font-size:22px;font-weight:900" id="totalScore">0</div>
+      <div class="card">
+        <div class="card-h">
+          <h1>إضافة / تعديل سجل</h1>
+          <div class="meta">
+            <span class="pill">عدد السجلات: <b id="count">0</b></span>
+            <input class="search" id="q" placeholder="بحث سريع: اسم العميل / التلفون / اللوحة / الاستشاري / المقاول / الأكشن">
           </div>
-          <div class="pill" id="statusPill">غير محفوظ</div>
         </div>
 
-        <div class="small muted" id="lastSaved">—</div>
-      </div>
+        <form id="form">
+          <div class="grid">
+            <div class="field">
+              <label>اسم العميل</label>
+              <input id="clientName" placeholder="مثال: أحمد محمد" required>
+            </div>
 
-      <div class="hint">
-        طريقة الحساب الافتراضية للبنود الرقمية: <b>الدرجة = الوزن × (الفعلي ÷ المطلوب)</b> مع حد أقصى = الوزن.
-        <br/>لو عندك بنود لازم تكون (0 أو الوزن) فقط، قولي وأنا أعدلها فورًا.
-      </div>
+            <div class="field">
+              <label>رقم اللوحة</label>
+              <input id="plateNo" placeholder="مثال: A 12345">
+            </div>
 
-      <div class="records">
-        <h3>السجلات المحفوظة</h3>
-        <div style="overflow:auto">
-          <table class="recTable">
+            <div class="field small">
+              <label>رقم التلفون</label>
+              <input id="phone" placeholder="مثال: 0501234567" inputmode="tel">
+            </div>
+
+            <div class="field small">
+              <label>اسم الاستشاري</label>
+              <input id="consultant" placeholder="مثال: مكتب XYZ">
+            </div>
+
+            <div class="field small">
+              <label>اسم المقاول</label>
+              <input id="contractor" placeholder="مثال: شركة ABC">
+            </div>
+
+            <div class="field">
+              <label>الأكشن</label>
+              <select id="action" required>
+                <option value="" disabled selected>اختر...</option>
+                <option>مقابلة</option>
+                <option>معاينة</option>
+                <option>عرض سعر</option>
+                <option>عقد مبدئي</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label>ملاحظات</label>
+              <textarea id="notes" placeholder="اكتب أي تفاصيل مهمة..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn primary" type="submit" id="btnSave">حفظ السجل</button>
+            <button class="btn" type="button" id="btnReset">تفريغ الحقول</button>
+            <span class="pill" id="editHint" style="display:none">وضع التعديل مفعل</span>
+          </div>
+        </form>
+
+        <div class="table-wrap">
+          <table>
             <thead>
               <tr>
-                <th>المندوب</th>
-                <th>الشهر</th>
-                <th>الإجمالي</th>
-                <th>آخر حفظ</th>
+                <th>#</th>
+                <th>التاريخ</th>
+                <th>اسم العميل</th>
+                <th>رقم اللوحة</th>
+                <th>رقم التلفون</th>
+                <th>الاستشاري</th>
+                <th>المقاول</th>
+                <th>الأكشن</th>
+                <th>ملاحظات</th>
                 <th>إجراءات</th>
               </tr>
             </thead>
-            <tbody id="recBody"></tbody>
+            <tbody id="tbody"></tbody>
           </table>
         </div>
       </div>
+
+      <div class="bottom">
+        <div>© SMOU GROUP — KPI / CRM</div>
+        <div>يحفظ البيانات محلياً على نفس الجهاز والمتصفح.</div>
+      </div>
+
     </div>
   </div>
 
 <script>
-  /***************
-   * 1) الإعدادات
-   ***************/
-  const STORAGE_KEY = "SMOU_KPI_RECORDS_V1";
+  // ===== Storage Keys =====
+  const STORAGE_KEY = "kpi_smougroup_clients_v1";
 
-  // ✅ غيّر أسماء المندوبين هنا
-  const reps = [
-    "محمد صقر",
-    "محمد صقر (2)",
-    "مندوب 3",
-    "مندوب 4"
-  ];
-
-  // ✅ البنود الثابتة (الأزرق): المطلوب + الوزن
-  const criteria = [
-    { id: 1, title: "عدد العقود", target: 12, weight: 20, type: "number" },
-    { id: 2, title: "عدد الزيارات الشهرية مواقع", target: 80, weight: 10, type: "number" },
-    { id: 3, title: "عدد الزيارات الشهرية مكاتب", target: 100, weight: 10, type: "number" },
-    { id: 4, title: "عدد عروض الأسعار", target: 25, weight: 10, type: "number" },
-    { id: 5, title: "الالتزام بمواعيد الحضور والانصراف", target: 25, weight: 10, type: "number" },
-    { id: 6, title: "المظهر العام", target: 10, weight: 10, type: "number" },
-    { id: 7, title: "الالتزام بإرسال التقارير", target: 25, weight: 10, type: "number" },
-    { id: 8, title: "تحديث شيت العمل الاسبوعي (مسح ميداني - عروض اسعار - زيارات مكاتب)", target: 4, weight: 10, type: "number" },
-    { id: 9, title: "إرسال كشف السوشيال ميديا", target: 4, weight: 10, type: "number" },
-  ];
-
-  function buildMonthsList() {
-    const now = new Date();
-    const months = [];
-    // 18 شهر (ماضي/حاضر) + 6 أشهر قدام
-    const start = new Date(now.getFullYear(), now.getMonth() - 18, 1);
-    for(let i=0;i<25;i++){
-      const d = new Date(start.getFullYear(), start.getMonth() + i, 1);
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,"0");
-      months.push(`${y}-${m}`);
-    }
-    return months;
-  }
-
-  /********************
-   * 2) أدوات التخزين
-   ********************/
-  function readStore(){
-    try{
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    }catch(e){
-      return {};
-    }
-  }
-
-  function writeStore(obj){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
-  }
-
-  function upsertRecord(rep, month, payload){
-    const store = readStore();
-    store[rep] = store[rep] || {};
-    store[rep][month] = payload;
-    writeStore(store);
-  }
-
-  function getRecord(rep, month){
-    const store = readStore();
-    return store?.[rep]?.[month] || null;
-  }
-
-  function deleteRecord(rep, month){
-    const store = readStore();
-    if(store?.[rep]?.[month]){
-      delete store[rep][month];
-      if(Object.keys(store[rep]).length===0) delete store[rep];
-      writeStore(store);
-      return true;
-    }
-    return false;
-  }
-
-  /********************
-   * 3) بناء الواجهة
-   ********************/
-  const repSelect = document.getElementById("repSelect");
-  const monthSelect = document.getElementById("monthSelect");
+  // ===== Elements =====
+  const form = document.getElementById("form");
+  const clientName = document.getElementById("clientName");
+  const plateNo = document.getElementById("plateNo");
+  const phone = document.getElementById("phone");
+  const consultant = document.getElementById("consultant");
+  const contractor = document.getElementById("contractor");
+  const action = document.getElementById("action");
+  const notes = document.getElementById("notes");
   const tbody = document.getElementById("tbody");
-  const totalScoreEl = document.getElementById("totalScore");
-  const statusPill = document.getElementById("statusPill");
-  const lastSavedEl = document.getElementById("lastSaved");
-  const noteEl = document.getElementById("note");
+  const countEl = document.getElementById("count");
+  const q = document.getElementById("q");
+  const editHint = document.getElementById("editHint");
 
-  function fillSelect(el, items, placeholder){
-    el.innerHTML = "";
-    if(placeholder){
-      const opt = document.createElement("option");
-      opt.value = "";
-      opt.textContent = placeholder;
-      opt.disabled = true;
-      opt.selected = true;
-      el.appendChild(opt);
+  const btnReset = document.getElementById("btnReset");
+  const btnClearAll = document.getElementById("btnClearAll");
+  const btnExport = document.getElementById("btnExport");
+  const fileImport = document.getElementById("fileImport");
+
+  // ===== Data =====
+  let rows = load();
+  let editId = null;
+
+  // ===== Helpers =====
+  function nowStr(){
+    const d = new Date();
+    // YYYY-MM-DD HH:MM
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mi = String(d.getMinutes()).padStart(2,"0");
+    return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+  }
+
+  function uid(){
+    // simple unique id
+    return "id_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+  }
+
+  function save(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+  }
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    }catch(e){
+      return [];
     }
-    items.forEach(v=>{
-      const opt = document.createElement("option");
-      opt.value = v;
-      opt.textContent = v;
-      el.appendChild(opt);
+  }
+
+  function esc(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function resetForm(){
+    form.reset();
+    notes.value = "";
+    editId = null;
+    editHint.style.display = "none";
+  }
+
+  function filteredRows(){
+    const term = (q.value || "").trim().toLowerCase();
+    if(!term) return rows;
+    return rows.filter(r => {
+      const hay = [
+        r.date, r.clientName, r.plateNo, r.phone,
+        r.consultant, r.contractor, r.action, r.notes
+      ].join(" ").toLowerCase();
+      return hay.includes(term);
     });
   }
 
-  function renderTable(){
-    tbody.innerHTML = "";
-    criteria.forEach((c, idx)=>{
-      const tr = document.createElement("tr");
+  function render(){
+    const data = filteredRows();
+    countEl.textContent = rows.length;
 
-      tr.innerHTML = `
-        <td class="center">${c.id}</td>
-        <td class="right">${c.title}</td>
-        <td class="center fixed light">${c.target}</td>
-        <td class="center fixed">${c.weight}</td>
-        <td class="center var">
-          <input class="kpiInput" type="number" min="0" step="1" data-id="${c.id}" placeholder="0">
+    tbody.innerHTML = data.map((r, i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td>${esc(r.date)}</td>
+        <td>${esc(r.clientName)}</td>
+        <td>${esc(r.plateNo)}</td>
+        <td>${esc(r.phone)}</td>
+        <td>${esc(r.consultant)}</td>
+        <td>${esc(r.contractor)}</td>
+        <td>${esc(r.action)}</td>
+        <td style="max-width:320px; white-space:pre-wrap">${esc(r.notes)}</td>
+        <td style="white-space:nowrap">
+          <button class="rowbtn" onclick="editRow('${r.id}')">تعديل</button>
+          <button class="rowbtn del" onclick="deleteRow('${r.id}')">حذف</button>
         </td>
-        <td class="center score" id="score_${c.id}">0</td>
-      `;
-      tbody.appendChild(tr);
-    });
+      </tr>
+    `).join("");
 
-    // صف الإجمالي
-    const trTotal = document.createElement("tr");
-    trTotal.innerHTML = `
-      <td class="center" colspan="4" style="font-weight:900;background:#0a2a4b;color:#fff">الإجمالي</td>
-      <td class="center" style="font-weight:900;background:#0a2a4b;color:#fff">—</td>
-      <td class="center" style="font-weight:900;background:#0a2a4b;color:#fff" id="sumCell">0</td>
-    `;
-    tbody.appendChild(trTotal);
-
-    // listeners
-    document.querySelectorAll(".kpiInput").forEach(inp=>{
-      inp.addEventListener("input", computeAll);
-    });
+    if(!tbody.innerHTML){
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:rgba(255,255,255,.75);padding:18px">
+        لا توجد نتائج
+      </td></tr>`;
+    }
   }
 
-  /********************
-   * 4) الحسابات
-   ********************/
-  function calcScore(actual, target, weight){
-    actual = Number(actual || 0);
-    target = Number(target || 0);
-    weight = Number(weight || 0);
-    if(target <= 0) return 0;
-    const ratio = actual / target;
-    const raw = weight * ratio;
-    const capped = Math.min(raw, weight);
-    // تقريب لرقمين عشريين
-    return Math.round(capped * 100) / 100;
-  }
+  // ===== Row Actions (Expose to window for onclick) =====
+  window.editRow = function(id){
+    const r = rows.find(x => x.id === id);
+    if(!r) return;
 
-  function computeAll(){
-    let total = 0;
+    editId = id;
+    clientName.value = r.clientName || "";
+    plateNo.value = r.plateNo || "";
+    phone.value = r.phone || "";
+    consultant.value = r.consultant || "";
+    contractor.value = r.contractor || "";
+    action.value = r.action || "";
+    notes.value = r.notes || "";
 
-    criteria.forEach(c=>{
-      const inp = document.querySelector(`.kpiInput[data-id="${c.id}"]`);
-      const actual = inp ? inp.value : 0;
-      const s = calcScore(actual, c.target, c.weight);
-      document.getElementById(`score_${c.id}`).textContent = s;
-      total += s;
-    });
+    editHint.style.display = "inline-flex";
+    window.scrollTo({top: 0, behavior: "smooth"});
+  };
 
-    total = Math.round(total * 100) / 100;
-    totalScoreEl.textContent = total;
-    const sumCell = document.getElementById("sumCell");
-    if(sumCell) sumCell.textContent = total;
+  window.deleteRow = function(id){
+    if(!confirm("تأكيد حذف السجل؟")) return;
+    rows = rows.filter(x => x.id !== id);
+    save();
+    render();
+    if(editId === id) resetForm();
+  };
 
-    statusPill.textContent = "غير محفوظ";
-    statusPill.className = "pill";
-    lastSavedEl.textContent = "—";
-  }
+  // ===== Form Submit =====
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  function collectPayload(){
-    const actuals = {};
-    const scores = {};
-    let total = 0;
-
-    criteria.forEach(c=>{
-      const inp = document.querySelector(`.kpiInput[data-id="${c.id}"]`);
-      const a = Number(inp?.value || 0);
-      const s = calcScore(a, c.target, c.weight);
-      actuals[c.id] = a;
-      scores[c.id] = s;
-      total += s;
-    });
-
-    total = Math.round(total * 100) / 100;
-
-    return {
-      rep: repSelect.value,
-      month: monthSelect.value,
-      note: (noteEl.value || "").trim(),
-      actuals,
-      scores,
-      total,
-      savedAt: new Date().toISOString(),
-      meta: {
-        version: 1,
-        criteriaSnapshot: criteria
-      }
+    const payload = {
+      id: editId || uid(),
+      date: editId ? (rows.find(x => x.id===editId)?.date || nowStr()) : nowStr(),
+      clientName: clientName.value.trim(),
+      plateNo: plateNo.value.trim(),
+      phone: phone.value.trim(),
+      consultant: consultant.value.trim(),
+      contractor: contractor.value.trim(),
+      action: action.value,
+      notes: notes.value.trim()
     };
-  }
 
-  function fillFromPayload(p){
-    if(!p) return;
-
-    criteria.forEach(c=>{
-      const inp = document.querySelector(`.kpiInput[data-id="${c.id}"]`);
-      if(inp) inp.value = (p.actuals?.[c.id] ?? 0);
-      const s = p.scores?.[c.id] ?? calcScore(inp?.value, c.target, c.weight);
-      const el = document.getElementById(`score_${c.id}`);
-      if(el) el.textContent = s;
-    });
-
-    const total = p.total ?? 0;
-    totalScoreEl.textContent = total;
-    const sumCell = document.getElementById("sumCell");
-    if(sumCell) sumCell.textContent = total;
-
-    noteEl.value = p.note || "";
-
-    statusPill.textContent = "محفوظ";
-    statusPill.className = "pill ok";
-    lastSavedEl.textContent = `آخر حفظ: ${new Date(p.savedAt).toLocaleString("ar-EG")}`;
-  }
-
-  /********************
-   * 5) أزرار العمليات
-   ********************/
-  document.getElementById("btnSave").addEventListener("click", ()=>{
-    const rep = repSelect.value;
-    const month = monthSelect.value;
-    if(!rep || !month){
-      alert("اختر المندوب والشهر أولاً.");
+    if(!payload.clientName || !payload.action){
+      alert("رجاءً أدخل اسم العميل واختر الأكشن.");
       return;
     }
-    const payload = collectPayload();
-    upsertRecord(rep, month, payload);
 
-    statusPill.textContent = "محفوظ";
-    statusPill.className = "pill ok";
-    lastSavedEl.textContent = `آخر حفظ: ${new Date(payload.savedAt).toLocaleString("ar-EG")}`;
-
-    renderRecords();
-    alert("تم الحفظ بنجاح ✅");
-  });
-
-  document.getElementById("btnLoad").addEventListener("click", ()=>{
-    const rep = repSelect.value;
-    const month = monthSelect.value;
-    if(!rep || !month){
-      alert("اختر المندوب والشهر أولاً.");
-      return;
-    }
-    const rec = getRecord(rep, month);
-    if(!rec){
-      alert("لا يوجد سجل محفوظ لهذا المندوب في هذا الشهر.");
-      return;
-    }
-    fillFromPayload(rec);
-  });
-
-  document.getElementById("btnDelete").addEventListener("click", ()=>{
-    const rep = repSelect.value;
-    const month = monthSelect.value;
-    if(!rep || !month){
-      alert("اختر المندوب والشهر أولاً.");
-      return;
-    }
-    if(!confirm("متأكد تريد حذف سجل هذا الشهر؟")) return;
-    const ok = deleteRecord(rep, month);
-    if(ok){
-      computeAll();
-      renderRecords();
-      alert("تم الحذف ✅");
+    if(editId){
+      rows = rows.map(x => x.id === editId ? payload : x);
     }else{
-      alert("لا يوجد سجل لحذفه.");
-    }
-  });
-
-  document.getElementById("btnReset").addEventListener("click", ()=>{
-    if(!confirm("تفريغ الإدخال الحالي؟")) return;
-    document.querySelectorAll(".kpiInput").forEach(i=> i.value = "");
-    noteEl.value = "";
-    computeAll();
-  });
-
-  repSelect.addEventListener("change", ()=>{
-    statusPill.textContent = "غير محفوظ";
-    statusPill.className = "pill";
-    lastSavedEl.textContent = "—";
-    renderRecords();
-  });
-
-  monthSelect.addEventListener("change", ()=>{
-    statusPill.textContent = "غير محفوظ";
-    statusPill.className = "pill";
-    lastSavedEl.textContent = "—";
-  });
-
-  /********************
-   * 6) قائمة السجلات
-   ********************/
-  const recBody = document.getElementById("recBody");
-
-  function renderRecords(){
-    const store = readStore();
-    const rep = repSelect.value;
-    recBody.innerHTML = "";
-
-    // اعرض سجلات المندوب المختار فقط (لتبقى بسيطة)
-    const repObj = store?.[rep] || {};
-    const months = Object.keys(repObj).sort().reverse();
-
-    if(!rep){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="5" class="muted">اختر مندوب لعرض سجلاته.</td>`;
-      recBody.appendChild(tr);
-      return;
+      rows.unshift(payload); // newest on top
     }
 
-    if(months.length === 0){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="5" class="muted">لا توجد سجلات محفوظة لهذا المندوب.</td>`;
-      recBody.appendChild(tr);
-      return;
-    }
+    save();
+    resetForm();
+    render();
+  });
 
-    months.forEach(m=>{
-      const r = repObj[m];
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${rep}</td>
-        <td>${m}</td>
-        <td style="font-weight:900">${r.total ?? 0}</td>
-        <td>${r.savedAt ? new Date(r.savedAt).toLocaleString("ar-EG") : "—"}</td>
-        <td>
-          <div class="recActions">
-            <button class="btn" data-act="open" data-month="${m}">فتح</button>
-            <button class="btn danger" data-act="del" data-month="${m}">حذف</button>
-          </div>
-        </td>
-      `;
-      recBody.appendChild(tr);
-    });
+  btnReset.addEventListener("click", resetForm);
 
-    // actions
-    recBody.querySelectorAll("button[data-act]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const act = b.dataset.act;
-        const m = b.dataset.month;
-        if(act === "open"){
-          monthSelect.value = m;
-          const rec = getRecord(rep, m);
-          fillFromPayload(rec);
-          window.scrollTo({top:0, behavior:"smooth"});
+  btnClearAll.addEventListener("click", () => {
+    if(!confirm("تحذير: سيتم مسح كل البيانات المحفوظة على هذا الجهاز. هل أنت متأكد؟")) return;
+    rows = [];
+    save();
+    resetForm();
+    render();
+  });
+
+  q.addEventListener("input", render);
+
+  // ===== CSV Export / Import =====
+  function toCSV(arr){
+    const header = ["date","clientName","plateNo","phone","consultant","contractor","action","notes"];
+    const lines = [header.join(",")];
+
+    for(const r of arr){
+      const row = header.map(k => {
+        const v = String(r[k] ?? "");
+        // CSV escape
+        if(v.includes('"') || v.includes(",") || v.includes("\n")){
+          return `"${v.replaceAll('"','""')}"`;
         }
-        if(act === "del"){
-          if(!confirm(`حذف سجل شهر ${m}؟`)) return;
-          deleteRecord(rep, m);
-          renderRecords();
-          computeAll();
-        }
-      });
-    });
+        return v;
+      }).join(",");
+      lines.push(row);
+    }
+    return lines.join("\n");
   }
 
-  /********************
-   * 7) تصدير/استيراد JSON
-   ********************/
-  document.getElementById("btnExport").addEventListener("click", ()=>{
-    const store = readStore();
-    const blob = new Blob([JSON.stringify(store, null, 2)], {type:"application/json"});
+  btnExport.addEventListener("click", () => {
+    const csv = toCSV(rows);
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "SMOU_KPI_Backup.json";
+    a.download = `kpi_smougroup_clients_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(a.href);
+    a.remove();
   });
 
-  document.getElementById("fileImport").addEventListener("change", async (e)=>{
-    const file = e.target.files?.[0];
-    if(!file) return;
-    try{
-      const text = await file.text();
-      const obj = JSON.parse(text);
-      if(typeof obj !== "object" || obj === null) throw new Error("Invalid JSON");
-      if(!confirm("سيتم دمج البيانات المستوردة مع الحالية. متابعة؟")) return;
+  function parseCSV(text){
+    // simple CSV parser (handles quoted cells)
+    const rows = [];
+    let i = 0, cell = "", row = [], inQuotes = false;
 
-      const current = readStore();
-      // merge
-      for(const rep of Object.keys(obj)){
-        current[rep] = current[rep] || {};
-        for(const month of Object.keys(obj[rep] || {})){
-          current[rep][month] = obj[rep][month];
-        }
-      }
-      writeStore(current);
-      renderRecords();
-      alert("تم الاستيراد ✅");
-    }catch(err){
-      alert("فشل الاستيراد: الملف غير صالح.");
-    }finally{
-      e.target.value = "";
+    function pushCell(){
+      row.push(cell);
+      cell = "";
     }
+    function pushRow(){
+      rows.push(row);
+      row = [];
+    }
+
+    while(i < text.length){
+      const ch = text[i];
+
+      if(inQuotes){
+        if(ch === '"' && text[i+1] === '"'){ // escaped quote
+          cell += '"'; i += 2; continue;
+        }
+        if(ch === '"'){ inQuotes = false; i++; continue; }
+        cell += ch; i++; continue;
+      }else{
+        if(ch === '"'){ inQuotes = true; i++; continue; }
+        if(ch === ","){ pushCell(); i++; continue; }
+        if(ch === "\n"){
+          pushCell(); pushRow(); i++; continue;
+        }
+        if(ch === "\r"){ i++; continue; }
+        cell += ch; i++; continue;
+      }
+    }
+    // last cell
+    pushCell();
+    pushRow();
+    return rows;
+  }
+
+  fileImport.addEventListener("change", async () => {
+    const file = fileImport.files?.[0];
+    if(!file) return;
+
+    const text = await file.text();
+    const parsed = parseCSV(text);
+    if(parsed.length < 2){
+      alert("ملف CSV غير صالح.");
+      fileImport.value = "";
+      return;
+    }
+
+    const header = parsed[0].map(h => (h||"").trim());
+    const idx = (name) => header.indexOf(name);
+
+    const required = ["date","clientName","plateNo","phone","consultant","contractor","action","notes"];
+    const missing = required.filter(k => idx(k) === -1);
+    if(missing.length){
+      alert("CSV لازم يحتوي الأعمدة التالية:\n" + required.join(", "));
+      fileImport.value = "";
+      return;
+    }
+
+    const imported = [];
+    for(let r=1; r<parsed.length; r++){
+      const line = parsed[r];
+      if(line.every(x => (x||"").trim()==="")) continue;
+
+      imported.push({
+        id: uid(),
+        date: (line[idx("date")]||"").trim() || nowStr(),
+        clientName: (line[idx("clientName")]||"").trim(),
+        plateNo: (line[idx("plateNo")]||"").trim(),
+        phone: (line[idx("phone")]||"").trim(),
+        consultant: (line[idx("consultant")]||"").trim(),
+        contractor: (line[idx("contractor")]||"").trim(),
+        action: (line[idx("action")]||"").trim(),
+        notes: (line[idx("notes")]||"").trim(),
+      });
+    }
+
+    if(!imported.length){
+      alert("لا توجد بيانات للاستيراد.");
+      fileImport.value = "";
+      return;
+    }
+
+    const mode = confirm("هل تريد دمج البيانات (OK) أم استبدال الكل (Cancel = استبدال)؟");
+    if(mode){
+      rows = [...imported, ...rows]; // merge, imported on top
+    }else{
+      rows = imported; // replace
+    }
+
+    save();
+    render();
+    fileImport.value = "";
+    alert("تم الاستيراد بنجاح ✅");
   });
 
-  /********************
-   * 8) تشغيل أول مرة
-   ********************/
-  fillSelect(repSelect, reps, "اختر المندوب");
-  fillSelect(monthSelect, buildMonthsList(), "اختر الشهر (YYYY-MM)");
-
-  renderTable();
-  computeAll();
-  renderRecords();
+  // ===== Init =====
+  render();
 </script>
-
 </body>
 </html>

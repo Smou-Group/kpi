@@ -1,640 +1,341 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>kpi.smougroup — إدخال بيانات العملاء</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التحليل المالي الشامل — مجموعة سمو</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#070d18;
+    --navy:#0d1a2e;
+    --navy-light:#132441;
+    --brass:#c9a463;
+    --brass-dim:#c9a46399;
+    --sky:#5bb3dd;
+    --sky-dim:#5bb3dd99;
+    --rose:#c06a63;
+    --rose-dim:#c06a6399;
+    --sage:#6fae8c;
+    --sage-dim:#6fae8c99;
+    --text:#e9edf3;
+    --muted:#8b98ac;
+    --hair:rgba(201,164,99,0.18);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(91,179,221,0.10), transparent),
+      radial-gradient(ellipse 700px 600px at 100% 20%, rgba(201,164,99,0.08), transparent),
+      linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 55%, var(--navy-deep) 100%);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:'Tajawal', sans-serif;
+    font-weight:400;
+    line-height:1.7;
+    min-height:100vh;
+  }
+  .wrap{max-width:1160px;margin:0 auto;padding:56px 28px 90px;}
+  h1,h2,h3,.num{font-family:'Cairo', sans-serif;}
 
-  <style>
-    :root{
-      --glass: rgba(255,255,255,.12);
-      --glass2: rgba(255,255,255,.18);
-      --border: rgba(255,255,255,.25);
-      --text:#ffffff;
-      --muted: rgba(255,255,255,.82);
-      --shadow: 0 18px 55px rgba(0,0,0,.40);
-      --accent: rgba(40,150,255,.65);
-      --accent2: rgba(17,120,214,.40);
-      --radius: 18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
-      color: var(--text);
-      min-height:100vh;
-      background:
-        url("back.png") center/cover no-repeat fixed,
-        url("back.jpg") center/cover no-repeat fixed,
-        radial-gradient(1200px 800px at 30% 10%, rgba(40,150,255,.28), transparent 60%),
-        linear-gradient(180deg, #071c33, #0b1b2b);
-    }
+  header{
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;
+    padding-bottom:36px; border-bottom:1px solid var(--hair); margin-bottom:20px;
+  }
+  .brand{font-family:'Cairo', sans-serif; font-weight:700; font-size:1.05rem; letter-spacing:0.02em; color:var(--brass);}
+  .brand span{color:var(--muted); font-weight:400; font-size:0.85rem; display:block; margin-top:4px;}
+  .meta{text-align:left; color:var(--muted); font-size:0.85rem;}
 
-    .overlay{
-      min-height:100vh;
-      padding:26px 14px 40px;
-      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.45));
-    }
+  .balance-badge{
+    display:flex; align-items:center; gap:10px;
+    background:rgba(111,174,140,0.08); border:1px solid rgba(111,174,140,0.28);
+    border-radius:10px; padding:10px 16px; margin-bottom:56px; width:fit-content;
+    font-size:0.85rem; color:#a9d4bc;
+  }
+  .balance-badge .dot{width:8px; height:8px; border-radius:50%; background:var(--sage); flex:none;}
 
-    .wrap{max-width:1150px;margin:0 auto}
+  .hero{display:grid; grid-template-columns:1.3fr 1fr; gap:32px; align-items:center; margin-bottom:16px;}
+  .hero h1{font-size:2.35rem; font-weight:700; line-height:1.35; color:var(--text);}
+  .hero h1 em{font-style:normal; color:var(--sky);}
+  .hero p{color:var(--muted); margin-top:16px; font-size:1.02rem; max-width:48ch;}
+  .hero-figure{
+    background:linear-gradient(155deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    border:1px solid var(--hair); border-radius:18px; padding:32px 28px; backdrop-filter:blur(14px); text-align:center;
+  }
+  .hero-figure .label{color:var(--muted); font-size:0.88rem; margin-bottom:10px;}
+  .hero-figure .value{font-size:2.6rem; font-weight:900; color:var(--brass); letter-spacing:-0.01em;}
+  .hero-figure .sub{color:var(--sage); font-size:0.92rem; margin-top:8px; font-weight:500;}
 
-    .topbar{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; flex-wrap:wrap;
-      margin-bottom:14px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      padding:12px 14px;
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-    }
-    .brand img{
-      width:44px; height:44px; object-fit:contain;
-      background: rgba(255,255,255,.85);
-      border-radius: 12px;
-      padding:6px;
-    }
-    .brand .txt{line-height:1.15}
-    .brand .txt b{display:block;font-size:14px}
-    .brand .txt span{font-size:12px;color:var(--muted)}
+  .exec-summary{
+    background:rgba(255,255,255,0.03); border:1px solid var(--hair); border-radius:16px;
+    padding:26px 28px; margin:56px 0 64px; font-size:0.98rem; color:#d3dae4;
+  }
+  .exec-summary b{color:var(--brass); font-family:'Cairo',sans-serif; font-weight:600;}
 
-    .actions{
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
-    .btn{
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, var(--glass2), rgba(255,255,255,.08));
-      color:var(--text);
-      padding:10px 12px;
-      border-radius: 14px;
-      cursor:pointer;
-      box-shadow: 0 12px 26px rgba(0,0,0,.25);
-      backdrop-filter: blur(10px);
-      display:inline-flex; align-items:center; gap:8px;
-      font-weight:700;
-    }
-    .btn:hover{transform: translateY(-1px)}
-    .btn.primary{
-      border-color: rgba(40,150,255,.75);
-      background: linear-gradient(180deg, rgba(40,150,255,.40), rgba(255,255,255,.10));
-    }
-    .btn.danger{
-      border-color: rgba(255,90,90,.55);
-      background: linear-gradient(180deg, rgba(255,90,90,.28), rgba(255,255,255,.08));
-    }
+  .section-head{margin-bottom:22px; display:flex; align-items:baseline; gap:14px;}
+  .section-head h2{font-size:1.35rem; font-weight:600; color:var(--text);}
+  .section-head .tag{color:var(--muted); font-size:0.82rem;}
+  .section-head .line{width:44px; height:3px; background:var(--sky); border-radius:2px; margin-top:10px;}
+  section{margin-bottom:64px;}
 
-    .card{
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      overflow:hidden;
-    }
+  .stats{display:grid; grid-template-columns:repeat(4, 1fr); gap:16px;}
+  .stat{background:rgba(255,255,255,0.035); border:1px solid var(--hair); border-radius:14px; padding:22px 20px; backdrop-filter:blur(10px);}
+  .stat .label{color:var(--muted); font-size:0.82rem; margin-bottom:10px;}
+  .stat .value{font-size:1.5rem; font-weight:700; color:var(--text);}
+  .stat .value.brass{color:var(--brass);} .stat .value.sky{color:var(--sky);}
+  .stat .value.rose{color:var(--rose);} .stat .value.sage{color:var(--sage);}
 
-    .card-h{
-      padding:14px 16px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; flex-wrap:wrap;
-      border-bottom: 1px solid rgba(255,255,255,.18);
-    }
-    .card-h h1{
-      margin:0;
-      font-size:16px;
-      letter-spacing:.2px;
-    }
-    .card-h .meta{
-      display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px;
-      align-items:center;
-    }
-    .pill{
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.12);
-      padding:6px 10px;
-      border-radius:999px;
-    }
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .panel{background:rgba(255,255,255,0.035); border:1px solid var(--hair); border-radius:16px; padding:26px 24px; backdrop-filter:blur(10px);}
+  .panel h3{font-size:1.05rem; font-weight:600; margin-bottom:18px; color:var(--text);}
+  .stack-row{margin-bottom:16px;}
+  .stack-row:last-child{margin-bottom:0;}
+  .stack-top{display:flex; justify-content:space-between; font-size:0.88rem; margin-bottom:7px;}
+  .stack-top .name{color:var(--muted);}
+  .stack-top .amt{font-family:'Cairo',sans-serif; font-weight:600; color:var(--text);}
+  .stack-track{height:9px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;}
+  .stack-fill{height:100%; border-radius:6px;}
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:12px;
-      padding:16px;
-    }
-    .field{
-      grid-column: span 6;
-      display:flex; flex-direction:column; gap:7px;
-    }
-    .field.small{grid-column: span 4;}
-    .field.full{grid-column: span 12;}
-    label{font-size:12px;color:var(--muted)}
-    input, select, textarea{
-      width:100%;
-      padding:12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(255,255,255,.10);
-      color: var(--text);
-      outline: none;
-      backdrop-filter: blur(10px);
-    }
-    input::placeholder, textarea::placeholder{color: rgba(255,255,255,.65)}
-    textarea{min-height:90px; resize: vertical}
+  .bars{background:rgba(255,255,255,0.03); border:1px solid var(--hair); border-radius:16px; padding:32px 30px; backdrop-filter:blur(10px);}
+  .bar-row{margin-bottom:24px;} .bar-row:last-child{margin-bottom:0;}
+  .bar-row .bar-top{display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.9rem;}
+  .bar-row .bar-top .name{color:var(--muted);}
+  .bar-row .bar-top .amt{color:var(--text); font-family:'Cairo',sans-serif; font-weight:600;}
+  .bar-track{height:10px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;}
+  .bar-fill{height:100%; border-radius:6px;}
+  .bar-fill.f-rev{background:linear-gradient(90deg, var(--sky), var(--sky-dim)); width:100%;}
+  .bar-fill.f-cogs{background:linear-gradient(90deg, var(--brass), var(--brass-dim)); width:40.3%;}
+  .bar-fill.f-opex{background:linear-gradient(90deg, var(--rose), var(--rose-dim)); width:52.6%;}
+  .bar-fill.f-net{background:linear-gradient(90deg, var(--sage), var(--sage-dim)); width:7.1%;}
 
-    .form-actions{
-      padding:0 16px 16px;
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-start;
-    }
+  .ratio-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  .ratio{background:rgba(255,255,255,0.035); border:1px solid var(--hair); border-radius:14px; padding:22px 20px; backdrop-filter:blur(10px); text-align:center;}
+  .ratio .value{font-size:1.7rem; font-weight:900; margin-bottom:6px;}
+  .ratio .value.sky{color:var(--sky);} .ratio .value.brass{color:var(--brass);}
+  .ratio .value.sage{color:var(--sage);} .ratio .value.rose{color:var(--rose);}
+  .ratio .label{color:var(--muted); font-size:0.8rem; margin-bottom:4px;}
+  .ratio .note{color:#7c8aa0; font-size:0.72rem;}
 
-    .table-wrap{padding:0 16px 16px; overflow:auto}
-    table{
-      width:100%;
-      border-collapse: collapse;
-      min-width: 980px;
-      background: rgba(0,0,0,.12);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 16px;
-      overflow:hidden;
-    }
-    th, td{
-      padding:10px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.12);
-      vertical-align: top;
-      font-size: 12.5px;
-    }
-    th{
-      text-align:right;
-      background: rgba(255,255,255,.10);
-      color: var(--muted);
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      backdrop-filter: blur(10px);
-    }
-    tr:hover td{background: rgba(255,255,255,.06)}
-    td .rowbtn{
-      padding:8px 10px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.10);
-      color:#fff;
-      cursor:pointer;
-      font-weight:700;
-    }
-    td .rowbtn.del{
-      border-color: rgba(255,90,90,.55);
-      background: rgba(255,90,90,.18);
-    }
+  .divisions{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .division{background:rgba(255,255,255,0.035); border:1px solid var(--hair); border-radius:16px; padding:26px 24px; backdrop-filter:blur(10px);}
+  .division h3{font-size:1.1rem; font-weight:600; margin-bottom:18px; display:flex; align-items:center; gap:10px;}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.sky{background:var(--sky);} .dot.rose{background:var(--rose);}
+  .division .row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed rgba(255,255,255,0.07); font-size:0.92rem;}
+  .division .row:last-child{border-bottom:none;}
+  .division .row .k{color:var(--muted);} .division .row .v{font-family:'Cairo',sans-serif; font-weight:600;}
+  .division .flag{margin-top:16px; padding:12px 14px; border-radius:10px; background:rgba(192,106,99,0.09); border:1px solid rgba(192,106,99,0.25); color:#dba39e; font-size:0.85rem;}
 
-    .bottom{
-      margin-top:14px;
-      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      color: rgba(255,255,255,.7);
-      font-size: 12px;
-      padding: 0 4px;
-    }
+  .points{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .point-card{border-radius:16px; padding:26px 24px; backdrop-filter:blur(10px);}
+  .point-card.strength{background:linear-gradient(160deg, rgba(91,179,221,0.07), rgba(255,255,255,0.02)); border:1px solid rgba(91,179,221,0.22);}
+  .point-card.weakness{background:linear-gradient(160deg, rgba(192,106,99,0.07), rgba(255,255,255,0.02)); border:1px solid rgba(192,106,99,0.22);}
+  .point-card h3{font-size:1.15rem; font-weight:700; margin-bottom:18px;}
+  .point-card.strength h3{color:var(--sky);} .point-card.weakness h3{color:var(--rose);}
+  .point-card ul{list-style:none;}
+  .point-card li{position:relative; padding-right:22px; margin-bottom:16px; font-size:0.94rem; color:#d3dae4;}
+  .point-card li:last-child{margin-bottom:0;}
+  .point-card li::before{content:""; position:absolute; right:0; top:8px; width:6px; height:6px; border-radius:50%;}
+  .point-card.strength li::before{background:var(--sky);} .point-card.weakness li::before{background:var(--rose);}
+  .point-card li b{color:var(--text); font-weight:600;}
 
-    .search{
-      width:min(420px, 100%);
-    }
+  .reco{background:rgba(255,255,255,0.035); border:1px solid var(--hair); border-radius:16px; padding:30px 28px; backdrop-filter:blur(10px);}
+  .reco-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px 32px;}
+  .reco-item{display:flex; gap:14px;}
+  .reco-num{
+    font-family:'Cairo',sans-serif; font-weight:900; color:var(--navy-deep); background:var(--brass);
+    width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    flex:none; font-size:0.95rem;
+  }
+  .reco-item p{font-size:0.92rem; color:#d3dae4;}
+  .reco-item p b{color:var(--brass); font-family:'Cairo',sans-serif;}
 
-    @media (max-width: 820px){
-      .field{grid-column: span 12;}
-      table{min-width: 980px;}
-    }
-  </style>
+  footer{text-align:center; color:var(--muted); font-size:0.8rem; padding-top:40px; border-top:1px solid var(--hair);}
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr;}
+    .stats, .ratio-grid{grid-template-columns:1fr 1fr;}
+    .split, .divisions, .points, .reco-grid{grid-template-columns:1fr;}
+  }
+</style>
 </head>
-
 <body>
-  <div class="overlay">
-    <div class="wrap">
+<div class="wrap">
 
-      <div class="topbar">
-        <div class="brand">
-          <img src="logo.png" alt="SMOU GROUP Logo" onerror="this.style.display='none'">
-          <div class="txt">
-            <b>kpi.smougroup</b>
-            <span>نموذج إدخال بيانات العملاء (CRM Action)</span>
-          </div>
-        </div>
+  <header>
+    <div class="brand">مجموعة سمو<span>SMOU Group — قسم المصاعد وأنظمة التكييف</span></div>
+    <div class="meta">التحليل المالي الشامل<br>مبني على ميزان المراجعة الكامل</div>
+  </header>
 
-        <div class="actions">
-          <button class="btn primary" id="btnExport">تصدير CSV</button>
-          <label class="btn" for="fileImport" style="cursor:pointer">استيراد CSV</label>
-          <input id="fileImport" type="file" accept=".csv" style="display:none">
-          <button class="btn danger" id="btnClearAll">مسح الكل</button>
-        </div>
-      </div>
+  <div class="balance-badge"><span class="dot"></span>ميزان المراجعة متوازن — إجمالي المدين 25,575,434.27 = إجمالي الدائن 25,575,434.27</div>
 
-      <div class="card">
-        <div class="card-h">
-          <h1>إضافة / تعديل سجل</h1>
-          <div class="meta">
-            <span class="pill">عدد السجلات: <b id="count">0</b></span>
-            <input class="search" id="q" placeholder="بحث سريع: اسم العميل / التلفون / اللوحة / الاستشاري / المقاول / الأكشن">
-          </div>
-        </div>
-
-        <form id="form">
-          <div class="grid">
-            <div class="field">
-              <label>اسم العميل</label>
-              <input id="clientName" placeholder="مثال: أحمد محمد" required>
-            </div>
-
-            <div class="field">
-              <label>رقم اللوحة</label>
-              <input id="plateNo" placeholder="مثال: A 12345">
-            </div>
-
-            <div class="field small">
-              <label>رقم التلفون</label>
-              <input id="phone" placeholder="مثال: 0501234567" inputmode="tel">
-            </div>
-
-            <div class="field small">
-              <label>اسم الاستشاري</label>
-              <input id="consultant" placeholder="مثال: مكتب XYZ">
-            </div>
-
-            <div class="field small">
-              <label>اسم المقاول</label>
-              <input id="contractor" placeholder="مثال: شركة ABC">
-            </div>
-
-            <div class="field">
-              <label>الأكشن</label>
-              <select id="action" required>
-                <option value="" disabled selected>اختر...</option>
-                <option>مقابلة</option>
-                <option>معاينة</option>
-                <option>عرض سعر</option>
-                <option>عقد مبدئي</option>
-              </select>
-            </div>
-
-            <div class="field full">
-              <label>ملاحظات</label>
-              <textarea id="notes" placeholder="اكتب أي تفاصيل مهمة..."></textarea>
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button class="btn primary" type="submit" id="btnSave">حفظ السجل</button>
-            <button class="btn" type="button" id="btnReset">تفريغ الحقول</button>
-            <span class="pill" id="editHint" style="display:none">وضع التعديل مفعل</span>
-          </div>
-        </form>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>التاريخ</th>
-                <th>اسم العميل</th>
-                <th>رقم اللوحة</th>
-                <th>رقم التلفون</th>
-                <th>الاستشاري</th>
-                <th>المقاول</th>
-                <th>الأكشن</th>
-                <th>ملاحظات</th>
-                <th>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="bottom">
-        <div>© SMOU GROUP — KPI / CRM</div>
-        <div>يحفظ البيانات محلياً على نفس الجهاز والمتصفح.</div>
-      </div>
-
-    </div>
+  <div class="hero">
+    <h1>مركز مالي متين تحمله <em>الرافعة المالية والتركّز في قسم واحد</em></h1>
+    <p>السيولة جيدة والعائد على حقوق الملكية مقبول، لكن نسبة المديونية إلى حقوق الملكية مرتفعة، والاعتماد شبه الكامل على المصاعد يجعل الشركة عرضة لأي تراجع في هذا القسم تحديداً.</p>
   </div>
 
-<script>
-  // ===== Storage Keys =====
-  const STORAGE_KEY = "kpi_smougroup_clients_v1";
+  <div class="hero-figure" style="margin-top:-24px; margin-bottom:0; max-width:340px;">
+    <div class="label">صافي الربح</div>
+    <div class="value">811,822.85</div>
+    <div class="sub">هامش صافي 7.13% · عائد على حقوق الملكية 18.83%</div>
+  </div>
 
-  // ===== Elements =====
-  const form = document.getElementById("form");
-  const clientName = document.getElementById("clientName");
-  const plateNo = document.getElementById("plateNo");
-  const phone = document.getElementById("phone");
-  const consultant = document.getElementById("consultant");
-  const contractor = document.getElementById("contractor");
-  const action = document.getElementById("action");
-  const notes = document.getElementById("notes");
-  const tbody = document.getElementById("tbody");
-  const countEl = document.getElementById("count");
-  const q = document.getElementById("q");
-  const editHint = document.getElementById("editHint");
+  <div class="exec-summary" style="margin-top:56px;">
+    الإيرادات بلغت <b>11,383,202.56</b> درهم بهامش إجمالي <b>59.75%</b>، لكن المصاريف التشغيلية المرتفعة (52.6% من الإيراد) تُنزل الهامش الصافي إلى <b>7.13%</b> فقط. الميزانية تُظهر إجمالي موجودات <b>15,004,054.56</b> درهم، منها 87.6% موجودات متداولة، ونسبة سيولة صحية عند <b>1.61</b>. في المقابل، الالتزامات غير المرتبطة بحقوق الملكية تفوق حقوق الملكية بنحو <b>2.19</b> ضعفاً، وقسم التكييف لا يمثل عملياً سوى <b>0.15%</b> من الإيرادات — وهو ما يستدعي مراجعة محاسبية واستراتيجية على حد سواء.
+  </div>
 
-  const btnReset = document.getElementById("btnReset");
-  const btnClearAll = document.getElementById("btnClearAll");
-  const btnExport = document.getElementById("btnExport");
-  const fileImport = document.getElementById("fileImport");
+  <section>
+    <div class="section-head"><h2>الأرقام الأساسية</h2><div class="line"></div></div>
+    <div class="stats">
+      <div class="stat"><div class="label">إجمالي الإيرادات</div><div class="value sky">11,383,202.56</div></div>
+      <div class="stat"><div class="label">تكلفة المواد</div><div class="value brass">4,581,994.70</div></div>
+      <div class="stat"><div class="label">مجمل الربح</div><div class="value">6,801,207.86</div></div>
+      <div class="stat"><div class="label">المصاريف التشغيلية</div><div class="value rose">5,989,385.01</div></div>
+    </div>
+  </section>
 
-  // ===== Data =====
-  let rows = load();
-  let editId = null;
+  <section>
+    <div class="section-head"><h2>المركز المالي</h2><div class="tag">إجمالي الموجودات 15,004,054.56 — إجمالي المطالب وحقوق الملكية 13,768,722.72</div><div class="line"></div></div>
+    <div class="split">
+      <div class="panel">
+        <h3>هيكل الموجودات</h3>
+        <div class="stack-row">
+          <div class="stack-top"><span class="name">موجودات متداولة (87.6%)</span><span class="amt">13,143,570.51</span></div>
+          <div class="stack-track"><div class="stack-fill" style="width:87.6%; background:linear-gradient(90deg, var(--sky), var(--sky-dim));"></div></div>
+        </div>
+        <div class="stack-row">
+          <div class="stack-top"><span class="name">موجودات ثابتة (12.4%)</span><span class="amt">1,860,484.05</span></div>
+          <div class="stack-track"><div class="stack-fill" style="width:12.4%; background:linear-gradient(90deg, var(--brass), var(--brass-dim));"></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>هيكل المطالب وحقوق الملكية</h3>
+        <div class="stack-row">
+          <div class="stack-top"><span class="name">التزامات متداولة (59.2%)</span><span class="amt">8,145,117.02</span></div>
+          <div class="stack-track"><div class="stack-fill" style="width:59.2%; background:linear-gradient(90deg, var(--rose), var(--rose-dim));"></div></div>
+        </div>
+        <div class="stack-row">
+          <div class="stack-top"><span class="name">حقوق الملكية (31.3%)</span><span class="amt">4,310,554.51</span></div>
+          <div class="stack-track"><div class="stack-fill" style="width:31.3%; background:linear-gradient(90deg, var(--sage), var(--sage-dim));"></div></div>
+        </div>
+        <div class="stack-row">
+          <div class="stack-top"><span class="name">التزامات ثابتة (9.5%)</span><span class="amt">1,313,051.19</span></div>
+          <div class="stack-track"><div class="stack-fill" style="width:9.5%; background:linear-gradient(90deg, var(--brass), var(--brass-dim));"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  // ===== Helpers =====
-  function nowStr(){
-    const d = new Date();
-    // YYYY-MM-DD HH:MM
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,"0");
-    const dd = String(d.getDate()).padStart(2,"0");
-    const hh = String(d.getHours()).padStart(2,"0");
-    const mi = String(d.getMinutes()).padStart(2,"0");
-    return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
-  }
+  <section>
+    <div class="section-head"><h2>نسب السيولة والملاءة</h2><div class="line"></div></div>
+    <div class="ratio-grid">
+      <div class="ratio"><div class="value sky">1.61×</div><div class="label">نسبة التداول</div><div class="note">موجودات متداولة ÷ التزامات متداولة</div></div>
+      <div class="ratio"><div class="value sage">4,998,453</div><div class="label">رأس المال العامل</div><div class="note">موجودات متداولة − التزامات متداولة</div></div>
+      <div class="ratio"><div class="value rose">2.19×</div><div class="label">الدين إلى حقوق الملكية</div><div class="note">التزامات إجمالية ÷ حقوق الملكية</div></div>
+      <div class="ratio"><div class="value brass">28.7%</div><div class="label">نسبة حقوق الملكية</div><div class="note">حقوق الملكية ÷ إجمالي الموجودات</div></div>
+    </div>
+  </section>
 
-  function uid(){
-    // simple unique id
-    return "id_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
-  }
+  <section>
+    <div class="section-head"><h2>من الإيراد إلى صافي الربح</h2><div class="line"></div></div>
+    <div class="bars">
+      <div class="bar-row">
+        <div class="bar-top"><span class="name">إجمالي الإيرادات</span><span class="amt">11,383,202.56</span></div>
+        <div class="bar-track"><div class="bar-fill f-rev"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-top"><span class="name">تكلفة المواد (40.3% من الإيراد)</span><span class="amt">4,581,994.70</span></div>
+        <div class="bar-track"><div class="bar-fill f-cogs"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-top"><span class="name">المصاريف التشغيلية (52.6% من الإيراد)</span><span class="amt">5,989,385.01</span></div>
+        <div class="bar-track"><div class="bar-fill f-opex"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-top"><span class="name">صافي الربح (7.1% من الإيراد)</span><span class="amt">811,822.85</span></div>
+        <div class="bar-track"><div class="bar-fill f-net"></div></div>
+      </div>
+    </div>
+  </section>
 
-  function save(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
-  }
+  <section>
+    <div class="section-head"><h2>مؤشرات الربحية والعائد</h2><div class="line"></div></div>
+    <div class="ratio-grid">
+      <div class="ratio"><div class="value sky">59.75%</div><div class="label">هامش الربح الإجمالي</div><div class="note">مجمل الربح ÷ الإيرادات</div></div>
+      <div class="ratio"><div class="value sage">7.13%</div><div class="label">هامش الربح الصافي</div><div class="note">صافي الربح ÷ الإيرادات</div></div>
+      <div class="ratio"><div class="value brass">5.41%</div><div class="label">العائد على الموجودات</div><div class="note">صافي الربح ÷ إجمالي الموجودات</div></div>
+      <div class="ratio"><div class="value rose">18.83%</div><div class="label">العائد على حقوق الملكية</div><div class="note">صافي الربح ÷ حقوق الملكية</div></div>
+    </div>
+  </section>
 
-  function load(){
-    try{
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    }catch(e){
-      return [];
-    }
-  }
+  <section>
+    <div class="section-head"><h2>الأداء حسب القسم</h2><div class="line"></div></div>
+    <div class="divisions">
+      <div class="division">
+        <h3><span class="dot sky"></span>المصاعد</h3>
+        <div class="row"><span class="k">الإيرادات</span><span class="v">11,366,607.32</span></div>
+        <div class="row"><span class="k">تكلفة المواد</span><span class="v">4,581,954.89</span></div>
+        <div class="row"><span class="k">مجمل الربح</span><span class="v">6,784,652.43</span></div>
+        <div class="row"><span class="k">هامش إجمالي</span><span class="v">59.7%</span></div>
+        <div class="row"><span class="k">حصة من إجمالي الإيرادات</span><span class="v">99.85%</span></div>
+      </div>
+      <div class="division">
+        <h3><span class="dot rose"></span>التكييف</h3>
+        <div class="row"><span class="k">الإيرادات</span><span class="v">16,595.24</span></div>
+        <div class="row"><span class="k">تكلفة المواد</span><span class="v">39.81</span></div>
+        <div class="row"><span class="k">مجمل الربح</span><span class="v">16,555.43</span></div>
+        <div class="row"><span class="k">هامش إجمالي</span><span class="v">99.8%</span></div>
+        <div class="row"><span class="k">حصة من إجمالي الإيرادات</span><span class="v">0.15%</span></div>
+        <div class="flag">هامش 99.8% غير واقعي محاسبياً — يرجّح أن تكلفة مواد التكييف لم تُرحّل بالكامل لهذه الفترة، وليس أن القسم بهذا الربح فعلياً. ملاحظة: موجودات ومطالب التكييف (13 و23) مقيدة في الميزانية بمبالغ أكبر (926,499.91 و1,685,302.74) رغم نشاط تشغيلي شبه معدوم في P&L، ما يعزز فرضية القيد غير المكتمل.</div>
+      </div>
+    </div>
+  </section>
 
-  function esc(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
+  <section>
+    <div class="section-head"><h2>نقاط القوة والضعف</h2><div class="line"></div></div>
+    <div class="points">
+      <div class="point-card strength">
+        <h3>نقاط القوة</h3>
+        <ul>
+          <li><b>هامش إجمالي قوي (59.75%)</b> — كل درهم مبيعات في المصاعد يترك أكثر من نصفه ربحاً قبل المصاريف التشغيلية.</li>
+          <li><b>سيولة صحية (1.61×)</b> — الموجودات المتداولة تغطي الالتزامات المتداولة بارتياح، ورأس المال العامل موجب بنحو 5 ملايين درهم.</li>
+          <li><b>عائد جيد على حقوق الملكية (18.83%)</b> — رغم الهامش الصافي المتواضع، الرافعة المالية تُنتج عائداً مجزياً للملاك.</li>
+          <li><b>قسم المصاعد مستقر ومهيمن</b> — يولّد 11.37 مليون درهم بثبات ويحمل الشركة بالكامل تقريباً.</li>
+          <li><b>ضبط تكلفة المواد في القسم الرئيسي</b> — نسبة التكلفة إلى الإيراد في المصاعد (40.3%) منطقية ومتّسقة.</li>
+          <li><b>دفاتر متوازنة ومنظمة</b> — إجمالي المدين يطابق إجمالي الدائن تماماً، وقيود الضريبة مرحّلة بوضوح.</li>
+        </ul>
+      </div>
+      <div class="point-card weakness">
+        <h3>نقاط الضعف</h3>
+        <ul>
+          <li><b>هامش صافي ضعيف (7.13%)</b> — المصاريف التشغيلية تلتهم 52.6% من الإيراد رغم الهامش الإجمالي القوي.</li>
+          <li><b>رافعة مالية مرتفعة (دين/حقوق ملكية 2.19×)</b> — الالتزامات تفوق حقوق الملكية بأكثر من الضعف، ما يرفع المخاطرة المالية.</li>
+          <li><b>حقوق الملكية 28.7% فقط من الموجودات</b> — قاعدة رأسمالية نسبياً ضيقة مقارنة بحجم الالتزامات.</li>
+          <li><b>اعتماد شبه كامل على قسم واحد</b> — التكييف يمثل 0.15% فقط من الإيرادات، ما يعني تركزاً خطيراً في مصدر دخل وحيد.</li>
+          <li><b>قيود تكلفة التكييف غير مكتملة على الأرجح</b> — 39.81 درهم تكلفة مقابل 16,595 درهم إيراد تستدعي مراجعة محاسبية عاجلة.</li>
+          <li><b>مصاريف ثابتة مرتفعة (74% من التشغيلية)</b> — يقلّص المرونة المالية عند أي تراجع في المبيعات.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-  function resetForm(){
-    form.reset();
-    notes.value = "";
-    editId = null;
-    editHint.style.display = "none";
-  }
+  <section>
+    <div class="section-head"><h2>توصيات</h2><div class="line"></div></div>
+    <div class="reco">
+      <div class="reco-grid">
+        <div class="reco-item"><div class="reco-num">1</div><p><b>مراجعة قيود تكلفة مواد التكييف</b> والتأكد من ترحيل جميع الفواتير والمصروفات المرتبطة بهذا القسم في نفس الفترة.</p></div>
+        <div class="reco-item"><div class="reco-num">2</div><p><b>تحليل تركيبة المصاريف الثابتة</b> (4.44 مليون درهم) لتحديد ما يمكن تحويله إلى متغير أو ترشيده دون التأثير على التشغيل.</p></div>
+        <div class="reco-item"><div class="reco-num">3</div><p><b>إعادة النظر في هيكل التمويل</b> — نسبة الدين المرتفعة (2.19×) تستدعي خطة لخفض الاعتماد على الالتزامات أو تعزيز حقوق الملكية.</p></div>
+        <div class="reco-item"><div class="reco-num">4</div><p><b>تقييم استراتيجية قسم التكييف</b> — إما توسيع النشاط فعلياً أو إعادة النظر في جدواه ضمن هيكل الشركة الحالي.</p></div>
+        <div class="reco-item"><div class="reco-num">5</div><p><b>وضع خطة سداد لالتزام ضريبة القيمة المضافة</b> (423,526.81 درهم) ضمن التدفقات النقدية القادمة.</p></div>
+        <div class="reco-item"><div class="reco-num">6</div><p><b>مراقبة نسبة المصاريف التشغيلية إلى الإيراد شهرياً</b> لرصد أي تآكل إضافي في هامش الربح الصافي مبكراً.</p></div>
+      </div>
+    </div>
+  </section>
 
-  function filteredRows(){
-    const term = (q.value || "").trim().toLowerCase();
-    if(!term) return rows;
-    return rows.filter(r => {
-      const hay = [
-        r.date, r.clientName, r.plateNo, r.phone,
-        r.consultant, r.contractor, r.action, r.notes
-      ].join(" ").toLowerCase();
-      return hay.includes(term);
-    });
-  }
+  <footer>تحليل مالي شامل مبني على ميزان المراجعة المرفق — مجموعة سمو</footer>
 
-  function render(){
-    const data = filteredRows();
-    countEl.textContent = rows.length;
-
-    tbody.innerHTML = data.map((r, i) => `
-      <tr>
-        <td>${i+1}</td>
-        <td>${esc(r.date)}</td>
-        <td>${esc(r.clientName)}</td>
-        <td>${esc(r.plateNo)}</td>
-        <td>${esc(r.phone)}</td>
-        <td>${esc(r.consultant)}</td>
-        <td>${esc(r.contractor)}</td>
-        <td>${esc(r.action)}</td>
-        <td style="max-width:320px; white-space:pre-wrap">${esc(r.notes)}</td>
-        <td style="white-space:nowrap">
-          <button class="rowbtn" onclick="editRow('${r.id}')">تعديل</button>
-          <button class="rowbtn del" onclick="deleteRow('${r.id}')">حذف</button>
-        </td>
-      </tr>
-    `).join("");
-
-    if(!tbody.innerHTML){
-      tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:rgba(255,255,255,.75);padding:18px">
-        لا توجد نتائج
-      </td></tr>`;
-    }
-  }
-
-  // ===== Row Actions (Expose to window for onclick) =====
-  window.editRow = function(id){
-    const r = rows.find(x => x.id === id);
-    if(!r) return;
-
-    editId = id;
-    clientName.value = r.clientName || "";
-    plateNo.value = r.plateNo || "";
-    phone.value = r.phone || "";
-    consultant.value = r.consultant || "";
-    contractor.value = r.contractor || "";
-    action.value = r.action || "";
-    notes.value = r.notes || "";
-
-    editHint.style.display = "inline-flex";
-    window.scrollTo({top: 0, behavior: "smooth"});
-  };
-
-  window.deleteRow = function(id){
-    if(!confirm("تأكيد حذف السجل؟")) return;
-    rows = rows.filter(x => x.id !== id);
-    save();
-    render();
-    if(editId === id) resetForm();
-  };
-
-  // ===== Form Submit =====
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const payload = {
-      id: editId || uid(),
-      date: editId ? (rows.find(x => x.id===editId)?.date || nowStr()) : nowStr(),
-      clientName: clientName.value.trim(),
-      plateNo: plateNo.value.trim(),
-      phone: phone.value.trim(),
-      consultant: consultant.value.trim(),
-      contractor: contractor.value.trim(),
-      action: action.value,
-      notes: notes.value.trim()
-    };
-
-    if(!payload.clientName || !payload.action){
-      alert("رجاءً أدخل اسم العميل واختر الأكشن.");
-      return;
-    }
-
-    if(editId){
-      rows = rows.map(x => x.id === editId ? payload : x);
-    }else{
-      rows.unshift(payload); // newest on top
-    }
-
-    save();
-    resetForm();
-    render();
-  });
-
-  btnReset.addEventListener("click", resetForm);
-
-  btnClearAll.addEventListener("click", () => {
-    if(!confirm("تحذير: سيتم مسح كل البيانات المحفوظة على هذا الجهاز. هل أنت متأكد؟")) return;
-    rows = [];
-    save();
-    resetForm();
-    render();
-  });
-
-  q.addEventListener("input", render);
-
-  // ===== CSV Export / Import =====
-  function toCSV(arr){
-    const header = ["date","clientName","plateNo","phone","consultant","contractor","action","notes"];
-    const lines = [header.join(",")];
-
-    for(const r of arr){
-      const row = header.map(k => {
-        const v = String(r[k] ?? "");
-        // CSV escape
-        if(v.includes('"') || v.includes(",") || v.includes("\n")){
-          return `"${v.replaceAll('"','""')}"`;
-        }
-        return v;
-      }).join(",");
-      lines.push(row);
-    }
-    return lines.join("\n");
-  }
-
-  btnExport.addEventListener("click", () => {
-    const csv = toCSV(rows);
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `kpi_smougroup_clients_${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  });
-
-  function parseCSV(text){
-    // simple CSV parser (handles quoted cells)
-    const rows = [];
-    let i = 0, cell = "", row = [], inQuotes = false;
-
-    function pushCell(){
-      row.push(cell);
-      cell = "";
-    }
-    function pushRow(){
-      rows.push(row);
-      row = [];
-    }
-
-    while(i < text.length){
-      const ch = text[i];
-
-      if(inQuotes){
-        if(ch === '"' && text[i+1] === '"'){ // escaped quote
-          cell += '"'; i += 2; continue;
-        }
-        if(ch === '"'){ inQuotes = false; i++; continue; }
-        cell += ch; i++; continue;
-      }else{
-        if(ch === '"'){ inQuotes = true; i++; continue; }
-        if(ch === ","){ pushCell(); i++; continue; }
-        if(ch === "\n"){
-          pushCell(); pushRow(); i++; continue;
-        }
-        if(ch === "\r"){ i++; continue; }
-        cell += ch; i++; continue;
-      }
-    }
-    // last cell
-    pushCell();
-    pushRow();
-    return rows;
-  }
-
-  fileImport.addEventListener("change", async () => {
-    const file = fileImport.files?.[0];
-    if(!file) return;
-
-    const text = await file.text();
-    const parsed = parseCSV(text);
-    if(parsed.length < 2){
-      alert("ملف CSV غير صالح.");
-      fileImport.value = "";
-      return;
-    }
-
-    const header = parsed[0].map(h => (h||"").trim());
-    const idx = (name) => header.indexOf(name);
-
-    const required = ["date","clientName","plateNo","phone","consultant","contractor","action","notes"];
-    const missing = required.filter(k => idx(k) === -1);
-    if(missing.length){
-      alert("CSV لازم يحتوي الأعمدة التالية:\n" + required.join(", "));
-      fileImport.value = "";
-      return;
-    }
-
-    const imported = [];
-    for(let r=1; r<parsed.length; r++){
-      const line = parsed[r];
-      if(line.every(x => (x||"").trim()==="")) continue;
-
-      imported.push({
-        id: uid(),
-        date: (line[idx("date")]||"").trim() || nowStr(),
-        clientName: (line[idx("clientName")]||"").trim(),
-        plateNo: (line[idx("plateNo")]||"").trim(),
-        phone: (line[idx("phone")]||"").trim(),
-        consultant: (line[idx("consultant")]||"").trim(),
-        contractor: (line[idx("contractor")]||"").trim(),
-        action: (line[idx("action")]||"").trim(),
-        notes: (line[idx("notes")]||"").trim(),
-      });
-    }
-
-    if(!imported.length){
-      alert("لا توجد بيانات للاستيراد.");
-      fileImport.value = "";
-      return;
-    }
-
-    const mode = confirm("هل تريد دمج البيانات (OK) أم استبدال الكل (Cancel = استبدال)؟");
-    if(mode){
-      rows = [...imported, ...rows]; // merge, imported on top
-    }else{
-      rows = imported; // replace
-    }
-
-    save();
-    render();
-    fileImport.value = "";
-    alert("تم الاستيراد بنجاح ✅");
-  });
-
-  // ===== Init =====
-  render();
-</script>
+</div>
 </body>
 </html>

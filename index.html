@@ -317,7 +317,7 @@ let downloadsP=inArtifact?window.claude.use("downloads").catch(()=>null):Promise
 if(inArtifact){$("#sendNote").innerHTML=`عند الضغط يتم إنشاء ملف PDF رسمي بإجاباتك لحفظه وإرساله إلى <b>${EMAIL}</b>.`}
 
 // submit flow
-let pdfBlob=null,fileName="";
+let pdfBlob=null,fileName="",sendErr="";
 $("#exam").addEventListener("submit",e=>{e.preventDefault();
  const name=$("#name").value.trim();
  if(name.length<3){$("#f-name").classList.add("err");$("#name").focus();$("#name").scrollIntoView({block:"center",behavior:"smooth"});
@@ -425,16 +425,37 @@ async function offerDownload(){
  return "failed";
 }
 
-function sendByForm(meta){
- return new Promise(res=>{
-  try{
-   const f=new File([pdfBlob],fileName,{type:"application/pdf"});const dt=new DataTransfer();dt.items.add(f);$("#mf-file").files=dt.files;
-   $("#mf-subject").value=`امتحان قبلي — التدقيق الداخلي — ${meta.name}`;$("#mf-name").value=meta.name;$("#mf-dept").value=meta.dept||"—";
-   $("#mf-count").value=`${meta.k} من 10`;$("#mf-time").value=`${fmtDate(meta.done)} ${fmtTime(meta.done)}`;
-   let ok=false;const fr=$("#mailFrame");fr.onload=()=>{ok=true;res(true)};
-   $("#mailForm").submit();setTimeout(()=>{if(!ok)res(false)},25000);
-  }catch(e){res(false)}
- });
+function answerLines(meta){
+ const out={};
+ TF.forEach((q,i)=>{const n=i+1,v=meta.a[n];out[`س${n}`]=v||"لم يُجب"});
+ MC.forEach((q,i)=>{const n=i+6,v=meta.a[n];out[`س${n}`]=v!==undefined?`${L[+v]}) ${q.o[+v]}`:"لم يُجب"});
+ return out;
+}
+// Sends via FormSubmit AJAX so the real server answer is known; falls back to a classic form post.
+async function sendByForm(meta){
+ const subject=`امتحان قبلي — التدقيق الداخلي — ${meta.name}`;
+ const fields={"_subject":subject,"_captcha":"false","_template":"table","اسم المتدرب":meta.name,"الإدارة / القسم":meta.dept||"—",
+  "عدد الأسئلة المجابة":`${meta.k} من 10`,"وقت التسليم":`${fmtDate(meta.done)} ${fmtTime(meta.done)}`,"المرجع":meta.ref,...answerLines(meta)};
+ const file=new File([pdfBlob],fileName,{type:"application/pdf"});
+ try{
+  const fd=new FormData();Object.entries(fields).forEach(([k,v])=>fd.append(k,v));fd.append("attachment",file,fileName);
+  const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),30000);
+  const r=await fetch("https://formsubmit.co/ajax/"+EMAIL,{method:"POST",headers:{"Accept":"application/json"},body:fd,signal:ctl.signal});
+  clearTimeout(to);
+  const j=await r.json().catch(()=>({}));
+  if(String(j.success)==="true")return {ok:true};
+  return {ok:false,msg:j.message||`HTTP ${r.status}`};
+ }catch(e){
+  // network/CORS failure: classic multipart post (attachments documented for this path)
+  return await new Promise(res=>{try{
+   const dt=new DataTransfer();dt.items.add(file);$("#mf-file").files=dt.files;
+   const f=$("#mailForm");f.querySelectorAll("input[data-extra]").forEach(x=>x.remove());
+   Object.entries(fields).forEach(([k,v])=>{if(k.startsWith("_")&&f.querySelector(`[name="${k}"]`)){f.querySelector(`[name="${k}"]`).value=v;return}
+    if(f.querySelector(`[name="${k}"]`)){f.querySelector(`[name="${k}"]`).value=v;return}
+    const i=document.createElement("input");i.type="hidden";i.name=k;i.value=v;i.dataset.extra="1";f.appendChild(i)});
+   let done=false;$("#mailFrame").onload=()=>{done=true;res({ok:"unknown"})};f.submit();setTimeout(()=>{if(!done)res({ok:false,msg:"timeout"})},25000);
+  }catch(err){res({ok:false,msg:String(err)})}});
+ }
 }
 
 function showResult(mode){
@@ -443,6 +464,11 @@ function showResult(mode){
  $("#mailto").href=m;
  if(mode==="sent"){$("#rTitle").textContent="تم إرسال إجاباتك بنجاح";$("#rText").textContent=`وصل ملف إجاباتك (PDF) إلى ${EMAIL}. شكراً لك، يمكنك إغلاق الصفحة.`;$("#rMail").hidden=true;
   try{localStorage.removeItem(KEY)}catch(e){}}
+ else if(mode==="fail"||mode==="failsaved"){
+  $("#rTitle").textContent="لم يكتمل الإرسال التلقائي";
+  const act=/activat|تفعيل/i.test(sendErr);
+  $("#rText").textContent=(act?"بريد الاستلام لم يُفعَّل بعد لدى خدمة الإرسال. ":"تعذّر إرسال الملف تلقائياً. ")+(mode==="failsaved"?`تم حفظ ملف إجاباتك ${fileName} على جهازك، أرسله يدوياً إلى البريد التالي.`:"اضغط «حفظ الملف مرة أخرى» ثم أرسله يدوياً إلى البريد التالي.")+(sendErr?`  (${sendErr})`:"");
+  $("#rTitle").parentElement.querySelector(".ic").textContent="!";$("#rMail").hidden=false;}
  else{$("#rTitle").textContent=mode==="saved"?"تم حفظ ملف إجاباتك":"ملف إجاباتك جاهز";
   $("#rText").textContent=mode==="saved"?`تم حفظ الملف ${fileName} على جهازك. الخطوة الأخيرة: أرسله إلى بريد التدريب.`:"لم يكتمل حفظ الملف. اضغط «حفظ الملف مرة أخرى» ثم أرسله إلى بريد التدريب.";
   $("#rMail").hidden=false;}
@@ -457,9 +483,9 @@ async function finalize(){
   pdfBlob=await makePdf(meta);
   if(!inArtifact&&location.protocol!=="file:"){
    $("#busyText").textContent="جاري إرسال الملف إلى بريد التدريب…";
-   const ok=await sendByForm(meta);$("#busy").hidden=true;
-   if(ok){showResult("sent");return}
-   const r=await offerDownload();showResult(r);return;
+   const res=await sendByForm(meta);$("#busy").hidden=true;
+   if(res.ok){showResult("sent");return}
+   sendErr=res.msg||"";const r=await offerDownload();showResult(r==="saved"?"failsaved":"fail");return;
   }
   $("#busy").hidden=true;const r=await offerDownload();showResult(r);
  }catch(err){console.error(err);$("#busy").hidden=true;$("#send").disabled=false;$("#warn").hidden=false;$("#warn").textContent="تعذّر إنشاء ملف الـ PDF. تأكد من اتصالك بالإنترنت ثم اضغط «إرسال الإجابات» مرة أخرى."}
